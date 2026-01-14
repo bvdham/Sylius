@@ -32,6 +32,7 @@ final class SyliusLocaleExtension extends AbstractResourceExtension
         $loader->load('services.xml');
 
         $container->setParameter('sylius_locale.locale', $config['locale']);
+        $container->setParameter('sylius_locale.implicit_default_locale', $config['implicit_default_locale']);
 
         $container->findDefinition('sylius.repository.locale')->setLazy(true);
 

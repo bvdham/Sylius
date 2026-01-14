@@ -39,6 +39,7 @@ final class Configuration implements ConfigurationInterface
         ;
 
         $this->addResourcesSection($rootNode);
+        $this->addImplicitResourcesSection($rootNode);
 
         return $treeBuilder;
     }
@@ -67,6 +68,18 @@ final class Configuration implements ConfigurationInterface
                             ->end()
                         ->end()
                     ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    private function addImplicitResourcesSection(ArrayNodeDefinition $node): void
+    {
+        $node
+            ->children()
+                ->booleanNode('implicit_default_locale')
+                ->defaultFalse()
+                ->info('If enabled, the default channel locale will not require a locale prefix in the URL.')
                 ->end()
             ->end()
         ;
