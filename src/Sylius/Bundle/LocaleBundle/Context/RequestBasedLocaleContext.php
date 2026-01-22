@@ -15,15 +15,29 @@ namespace Sylius\Bundle\LocaleBundle\Context;
 
 use Sylius\Component\Locale\Context\LocaleContextInterface;
 use Sylius\Component\Locale\Context\LocaleNotFoundException;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
+use Sylius\Component\Locale\Context\LocaleNormalizerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Resolves locale based on the current HTTP request.
+ *
+ * This context delegates locale normalization to LocaleNormalizerInterface,
+ * allowing support for:
+ *  - implicit default locale
+ *  - short locale codes (e.g. "nl")
+ *  - full locale codes (e.g. "nl_NL")
+ */
 final class RequestBasedLocaleContext implements LocaleContextInterface
 {
-    public function __construct(private RequestStack $requestStack, private LocaleProviderInterface $localeProvider)
-    {
+    public function __construct(
+        private RequestStack $requestStack,
+        private LocaleNormalizerInterface $localeNormalizer,
+    ) {
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLocaleCode(): string
     {
         $request = $this->requestStack->getMainRequest();
@@ -31,16 +45,9 @@ final class RequestBasedLocaleContext implements LocaleContextInterface
             throw new LocaleNotFoundException('No main request available.');
         }
 
+        /** @var string|null $localeCode */
         $localeCode = $request->attributes->get('_locale');
-        if (null === $localeCode) {
-            throw new LocaleNotFoundException('No locale attribute is set on the master request.');
-        }
 
-        $availableLocalesCodes = $this->localeProvider->getAvailableLocalesCodes();
-        if (!in_array($localeCode, $availableLocalesCodes, true)) {
-            throw LocaleNotFoundException::notAvailable($localeCode, $availableLocalesCodes);
-        }
-
-        return $localeCode;
+        return $this->localeNormalizer->normalize($localeCode);
     }
 }
