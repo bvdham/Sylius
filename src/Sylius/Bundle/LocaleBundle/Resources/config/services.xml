@@ -99,5 +99,10 @@
             <argument type="service" id="sylius.provider.locale" />
             <argument>%sylius_locale.implicit_default_locale%</argument>
         </service>
+
+        <service id="sylius.locale.denormalizer" class="Sylius\Component\Locale\Context\LocaleDenormalizer">
+            <argument type="service" id="sylius.provider.locale" />
+            <argument>%sylius_locale.implicit_default_locale%</argument>
+        </service>
     </services>
 </container>

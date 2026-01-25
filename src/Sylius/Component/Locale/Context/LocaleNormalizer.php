@@ -63,22 +63,4 @@ final class LocaleNormalizer implements LocaleNormalizerInterface
 
         throw LocaleNotFoundException::notAvailable($localeCode, $availableLocales);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function denormalize(string $locale): string
-    {
-        // Already short (defensive)
-        if (strlen($locale) === 2) {
-            return $locale;
-        }
-
-        // Expected format: ll_CC
-        if (str_contains($locale, '_')) {
-            return strtolower(substr($locale, 0, 2));
-        }
-
-        return $locale;
-    }
 }
