@@ -36,4 +36,13 @@ interface LocaleNormalizerInterface
      * @throws LocaleNotFoundException If the locale cannot be resolved or is not available
      */
     public function normalize(?string $localeCode): string;
+
+    /**
+     * Denormalizes a locale from full locale code to URL format.
+     *
+     * Examples:
+     *  - "nl_NL" → "nl"
+     *  - "en_US" → "en"
+     */
+    public function denormalize(string $locale): string
 }
