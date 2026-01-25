@@ -44,5 +44,5 @@ interface LocaleNormalizerInterface
      *  - "nl_NL" → "nl"
      *  - "en_US" → "en"
      */
-    public function denormalize(string $locale): string
+    public function denormalize(string $locale): string;
 }
