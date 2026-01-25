@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Sylius\Bundle\ShopBundle\EventListener;
 
+use Sylius\Component\Locale\Context\LocaleNormalizerInterface;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Symfony\Bundle\SecurityBundle\Security\FirewallConfig;
 use Symfony\Bundle\SecurityBundle\Security\FirewallMap;
@@ -34,6 +35,7 @@ final class NonChannelLocaleListener
         private RouterInterface $router,
         private LocaleProviderInterface $channelBasedLocaleProvider,
         private FirewallMap $firewallMap,
+        private LocaleNormalizerInterface $localeNormalizer,
         array $firewallNames,
     ) {
         Assert::notEmpty($firewallNames);
@@ -61,7 +63,9 @@ final class NonChannelLocaleListener
         }
 
         $requestLocale = $request->getLocale();
-        if (!in_array($requestLocale, $this->channelBasedLocaleProvider->getAvailableLocalesCodes(), true)) {
+        $normalizedLocale = $this->localeNormalizer->normalize($requestLocale);
+
+        if (null === $normalizedLocale) {
             $event->setResponse(
                 new RedirectResponse(
                     $this->router->generate(
@@ -70,7 +74,12 @@ final class NonChannelLocaleListener
                     ),
                 ),
             );
+
+            return;
         }
+
+        $request->setLocale($normalizedLocale);
+        $request->attributes->set('_locale', $normalizedLocale);
     }
 
     private function isFirewallSupported(?FirewallConfig $firewall = null): bool

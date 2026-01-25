@@ -25,6 +25,7 @@
             <argument type="service" id="router" />
             <argument type="service" id="sylius.provider.locale" />
             <argument type="service" id="security.firewall.map" />
+            <argument type="service" id="sylius.locale.normalizer" />
             <argument type="collection">
                 <argument type="string">%sylius_shop.firewall_context_name%</argument>
             </argument>
